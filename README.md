@@ -8,14 +8,19 @@ The Battleship Multiplayer Game is an interactive web-based gaming platform that
 ### Backend:
 
 Node.js: JavaScript runtime for server-side development.
+
 Express.js: Web application framework for building the backend server.
+
 Socket.io: Real-time bidirectional event-based communication for enabling multiplayer functionality.
 
 ### Frontend:
 
 React: JavaScript library for building user interfaces.
+
 HTML & EJS: Templating engines for generating dynamic HTML content.
+
 jQuery: Fast, small, and feature-rich JavaScript library for frontend interactions.
+
 Bootstrap: CSS framework for designing responsive and appealing user interfaces.
 
 ## Features
