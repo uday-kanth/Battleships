@@ -21,14 +21,14 @@ Bootstrap: CSS framework for designing responsive and appealing user interfaces.
 
 ## Features
 
-Real-time Battleship Game:
+**Real-time Battleship Game:**
 Engage in battles against other players in real-time.
 
-Multiplayer Functionality:
+**Multiplayer Functionality:**
 Enjoy the classic Battleship game with friends or random opponents.
 
-Responsive Design:
+**Responsive Design:**
 Ensure a seamless gaming experience across various devices.
 
-User Authentication (Optional):
+**User Authentication (Optional):**
 Implement user authentication for personalized profiles.
