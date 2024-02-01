@@ -1,5 +1,4 @@
 # Battleships
-Battleship Multiplayer Game
 
 ## Overview
 The Battleship Multiplayer Game is an interactive web-based gaming platform that allows players to engage in the classic game of Battleship against each other. The game provides real-time multiplayer functionality, enhancing the gaming experience for users.
