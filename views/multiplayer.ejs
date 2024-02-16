@@ -9,26 +9,42 @@
     <script src="./js/jquery.min.js"></script>
     <script src="/javascripts/multiplayer.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     
     <script>
       let gameMode = 'multiPlayer'
+      let roomCode = '<%= roomCode %>';
+      let username='<%=username %>'
+//console.log('Room Code:', roomCode);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </script>
 
   </head>
   <body>
-    <div class="container">
-      <div class="player p1">
-        Player 1
-        <div class="connected">Connected</div>
-        <div class="ready">Ready</div>
-      </div>
-      
-      <div class="player p2">
-        Player 2
-        <div class="connected">Connected</div>
-        <div class="ready">Ready</div>
-      </div>
+    <div class="container" id="playerinfo">
+     
+    </div>
+
+
+    <div class="mt-2 text-center h4">
+     <div>Room Code : <span id="roomCode"><%= roomCode %></span></div>
+      <div><button id="shareBtn" class="btn btn-dark mt-3" data-toggle="modal" data-target="#shareModal">Share</button></div>
+
     </div>
 
     <div class="container">
@@ -38,8 +54,11 @@
 
     <div class="container hidden-info">
       <div class="setup-buttons" id="setup-buttons">
-        <button id="start" class="btn btn-primary">Start Game</button>
+        <button id="start" class="btn btn-success">Start Game</button>
         <button id="rotate" class="btn btn-primary">Rotate Your Ships</button>
+      </div>
+      <div class="m-1">
+        <button id="exit" class="btn btn-warning name=exit"  >Exit</button>
       </div>
       <h3 id="whose-go" class="info-text">Your Go</h3>
       <h3 id="info" class="info-text"></h3>
@@ -54,5 +73,35 @@
         <div class="ship carrier-container" draggable="true"><div id="carrier-0"></div><div id="carrier-1"></div><div id="carrier-2"></div><div id="carrier-3"></div><div id="carrier-4"></div></div>
       </div>
     </div>
+
+
+
+
+
+     <!-- Bootstrap Modal for sharing room -->
+  <div class="modal fade" id="shareModal" tabindex="-1" role="dialog" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="shareModalLabel">Share Room</h5>
+          <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <label for="emailInput">Email Address:</label>
+          <input type="email" id="emailInput" class="form-control" placeholder="Enter email address">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" id="sendEmailBtn" class="btn btn-primary" >Send Email</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
   </body>
 </html>

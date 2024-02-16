@@ -1,6 +1,53 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
+
+  $("#exit").on('click',()=>{
+    console.log('exit button')
+    window.location.href = '/dashboard';
+  })
+
+
+
+$("#sendEmailBtn").on('click',function(){
+  const email = $("#emailInput").val();
+  console.log(email)
+  const data = {
+      email,
+      roomCode,
+      username
+
+    };
+
+  fetch('/shareroom', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Email sent successfully!');
+      } else {
+        alert('Failed to send email.');
+      }
+    })
+    .catch(error => {
+      console.error('Error sending email:', error);
+      alert('Failed to send email.');
+    });
+
+
+});
+
+
+
+
+
+
+
+
   const userGrid = document.querySelector('.grid-user')
   const computerGrid = document.querySelector('.grid-computer')
   const displayGrid = document.querySelector('.grid-display')
@@ -26,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let enemyReady = false
   let allShipsPlaced = false
   let shotFired = -1
+  let enemyusername='enemy'
   //Ships
   const shipArray = [
     {
@@ -69,7 +117,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Select Player Mode
   function startMultiPlayer() {
-    const socket = io();
+    const socket = io({
+      query: {
+          roomCode: roomCode
+      }
+  });
 
     // Get your player number
     socket.on('player-number', num => {
@@ -81,15 +133,61 @@ document.addEventListener('DOMContentLoaded', () => {
 
         console.log(playerNum)
 
+        const info1=` 
+        <div class="player p1" style="font-weight: bold; color: green;">
+        ${username}
+        <div class="connected">Connected</div>
+        <div class="ready">Ready</div>
+      </div>
+      
+      <div class="player p2" >
+        <div id="p2">${enemyusername}</div>
+        <div class="connected">Connected</div>
+        <div class="ready">Ready</div>
+      </div>`
+      
+      const info2=` 
+      <div class="player p2" style="font-weight: bold; color: green;">
+      ${username}
+      <div class="connected">Connected</div>
+      <div class="ready">Ready</div>
+    </div>
+      <div class="player p1">
+        <div  id='p1' >${enemyusername}</div>
+      <div class="connected">Connected</div>
+      <div class="ready">Ready</div>
+    </div>
+    `
+
+    if(playerNum===0){
+      $("#playerinfo").html(info1);
+    }
+    else{
+      $("#playerinfo").html(info2);
+      socket.emit('i-am-player-2',username);
+    }
+
         // Get other player status
         socket.emit('check-players')
+        
       }
+    })
+
+    socket.on('i-am-player-2',(player2)=>{
+      $("#p2").text(player2)
+      console.log(player2)
+      socket.emit('i-am-player-1',username);
+    })
+
+    socket.on('i-am-player-1',(player1)=>{
+      console.log(player1)
+      $("#p1").text(player1)
     })
 
     // Another player has connected or disconnected
     socket.on('player-connection', num => {
       console.log(`Player number ${num} has connected or disconnected`)
-      playerConnectedOrDisconnected(num)
+      playerConnectedOrDisconnected(num,false)
     })
 
     // On enemy ready
@@ -105,7 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check player status
     socket.on('check-players', players => {
       players.forEach((p, i) => {
-        if(p.connected) playerConnectedOrDisconnected(i)
+        if(p.connected)
+        { playerConnectedOrDisconnected(i,p.connected);
+          console.log(i+"check-player")
+        }
         if(p.ready) {
           console.log(`${p} + ${p.ready}`)
           playerReady(i)
@@ -149,13 +250,18 @@ document.addEventListener('DOMContentLoaded', () => {
       playGameMulti(socket)
     })
 
-    function playerConnectedOrDisconnected(num) {
+    function playerConnectedOrDisconnected(num,isConnected) {
       let player = `.p${parseInt(num) + 1}`
-      document.querySelector(`${player} .connected`).classList.toggle('active')
-      if(parseInt(num) === playerNum) {
-        document.querySelector(player).style.fontWeight = 'bold';
-        document.querySelector(player).style.color = 'green';
-    }
+      console.log(player+"this is conneted or disconnected function")
+      const ele=document.querySelector(`${player} .connected`).classList
+      if(isConnected && ele.contains('active')){}
+      else{
+      ele.toggle('active');
+      }
+      
+
+
+
     }
   }
 

@@ -5,10 +5,15 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const socketIo = require('socket.io');
 const http = require('http');
+require('dotenv').config()
+const verifyToken=require('./middleware/authMiddleware')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-const mongoose=require('mongoose')
+var authRouter=require('./routes/auth');
+
+
+
 
 var app = express();
 const server = http.createServer(app);
@@ -24,7 +29,34 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+app.post('/getRoomIds',verifyToken,(req,res)=>{
+  let joinCode=req.body.inputCode
+  const decoded=req.decoded;
+
+
+  console.log(Object.keys(roomConnections))
+  let rooms=Object.keys(roomConnections);
+
+  if(roomConnections.hasOwnProperty(joinCode) && roomConnections[joinCode].length<2){
+    
+
+    res.redirect(`/multiplayer?roomCode=${joinCode}`);
+
+  }
+  else{
+    res.status(400).send('no room')
+  }
+
+  
+
+});
+
+
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
+
 app.use('/users', usersRouter);
 
 app.use('/css', express.static(path.join(__dirname, 'node_modules/bootstrap/dist/css')))
@@ -36,14 +68,14 @@ app.get('/socket.io/socket.io.js', (req, res) => {
 });
 
 
-mongoose.connect('mongodb://localhost:27017/battleships', { useNewUrlParser: true, useUnifiedTopology: true });
-const db = mongoose.connection;
 
-// Handle connection errors
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', function() {
-  console.log('Connected to MongoDB');
-});
+
+
+
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -61,39 +93,101 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+const roomConnections = {};
 
-const connections = [null, null]
+const MAX_PLAYERS_PER_ROOM = 2;
+
+
 
 io.on('connection', socket => {
-  console.log('New WS Connection')
+  const roomCode = socket.handshake.query.roomCode;
+  console.log(roomCode);
 
-  // Find an available player number
-  let playerIndex = -1;
-  for (const i in connections) {
-    if (connections[i] === null) {
-      playerIndex = i
-      //connections[i]=i;
-      break
-    }
+    // Now you can use the roomCode as needed
+    //console.log('New WS Connection')
+    //console.log('Connected to room:', roomCode);
+   // const roomIds = getAllRoomIds();
+  //console.log('List of Room IDs:', roomIds);
+
+  if (!roomConnections.hasOwnProperty(roomCode)) {
+    roomConnections[roomCode] = [];
+  }
+  if (roomConnections[roomCode].length >= MAX_PLAYERS_PER_ROOM) {
+    // Notify the client that the room is full
+    //socket.emit('roomFull', room);
+    return;
   }
 
+  // Find an available player number
+  let playerIndex = roomConnections[roomCode].length;
+  
+  // for (const i in connections) {
+  //   if (connections[i] === null) {
+  //     playerIndex = i
+  //     //connections[i]=i;
+  //     break
+  //   }
+  // }
+  socket.join(roomCode);
+  //console.log(socket.rooms);
+
+  
+  roomConnections[roomCode].push(socket);
+
+  // Notify the client that they have successfully joined the room
+  //socket.emit('joinedRoom', room);
+
+
+  socket.emit('player-number', playerIndex);
+
   console.log(`Player ${playerIndex} has connected`)
+  //console.log(roomConnections[roomCode])
+  console.log(Object.keys(roomConnections))
 
   // Ignore player 3
   if (playerIndex === -1) return
 
-  connections[playerIndex] = false
-  socket.emit('player-number', playerIndex);
+ 
 
 
 
 
 
   socket.on('disconnect', () => {
+    
+
+    
+    // Leave the rooms and remove the socket from connections
+    socket.leave(roomCode);
+
+
+
+      // Remove the socket from the array of connections for the room
+    roomConnections[roomCode] = roomConnections[roomCode].filter(conn => conn !== socket);
+      //console.log("after disconnect "+Object.keys(roomConnections))
+    socket.to(roomCode).emit('player-connection', playerIndex);
+  
+    
+    // Remove empty rooms
+    Object.keys(roomConnections).forEach(room => {
+      if (roomConnections[room].length === 0) {
+        delete roomConnections[room];
+      }
+    });
+    
     console.log(`Player ${playerIndex} disconnected...............`)
-    connections[playerIndex] = null
-    //Tell everyone what player numbe just disconnected
-    socket.broadcast.emit('player-connection', playerIndex)
+    console.log(Object.keys(roomConnections))
+  })
+
+
+
+
+  socket.on('i-am-player-2',(username)=>{
+    console.log(username)
+    socket.to(roomCode).emit('i-am-player-2',username);
+  })
+  socket.on('i-am-player-1',(username)=>{
+    socket.to(roomCode).emit('i-am-player-1',username);
   })
 
 
@@ -101,17 +195,20 @@ io.on('connection', socket => {
 
   socket.on('check-players', () => {
     const players = []
-    for (const i in connections) {
-      connections[i] === null ? players.push({connected: false, ready: false}) : players.push({connected: true, ready: connections[i]})
-    }
-    console.log(players)
-    socket.emit('check-players', players)
+    roomConnections[roomCode].forEach((conn, index) => {
+      const isConnected = true
+      const playerID=index;
+      const ready=false
+      players.push({ connected: isConnected,playerID,ready});
+    });
+    console.log(players);
+    //console.log(players)
+    io.to(roomCode).emit('check-players', players)
   });
 
 
   socket.on('player-ready', () => {
-    socket.broadcast.emit('enemy-ready', playerIndex)
-    connections[playerIndex] = true
+    socket.to(roomCode).emit('enemy-ready', playerIndex);
   })
 
 
@@ -120,7 +217,8 @@ io.on('connection', socket => {
     console.log(`Shot fired from ${playerIndex}`, id)
 
     // Emit the move to the other player
-    socket.broadcast.emit('fire', id)
+    socket.to(roomCode).emit('fire', id);
+
   })
 
   // on Fire Reply
@@ -128,7 +226,7 @@ io.on('connection', socket => {
     console.log(square)
 
     // Forward the reply to the other player
-    socket.broadcast.emit('fire-reply', square)
+    socket.to(roomCode).emit('fire-reply', square)
   })
 
   // Timeout connection
@@ -150,7 +248,7 @@ io.on('connection', socket => {
 
 
 
-server.listen(3000, () => {
+server.listen(process.env.PORT, () => {
   console.log('Server is running on port 3000');
 });
-// module.exports = app;
+module.exports = app;

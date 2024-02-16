@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Montserrat&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/room.css' />
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+</head>
+<body>
+    <div class="container-fluid room">
+        <div class="row  center-column" >
+            <div class=" bg-light text-center roomcard">
+                <a class="btn btn-outline-dark" href="/multiplayer">Create Room</a>
+            </div>
+            <div class=" roomcard">
+               
+
+                    <div class="col-md-8 ">
+                        <h4 class="text-center">Enter the Room Code :</h4>
+                        <form action="/getRoomIds" class="text-center" method="POST">
+                            <div class="form-group mt-3">
+                                <input id="inputCode" name="inputCode" type="text" class="form-control" placeholder="Enter the code">
+                            </div>
+                            <button type="submit" id='joinButton' class="btn btn-outline-dark btn-block mt-3">Join</button>
+                        </form>
+                    </div>
+
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -3,18 +3,28 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="/javascripts/index.js"></script>
 
 
   </head>
   <body>
+    <div class="topnav row ">
+      <div class="col-6 py-3 px-5 text-white h3"><%= username %></div>
+      <div class="col-6 py-3 px-5" id="logoutdiv"> 
+        <button class="btn btn-outline-warning " id="logoutBtn" type="btn"> Logout</button>
+      </div>
+    </div>
+
+
     <div class="splash-container">
       <h1 class="splash-title">Battleship</h1>
       <div>
         <a href="/singleplayer" class="btn btn-outline-dark splash-btn">Single Player</a>
-        <a href="/multiplayer" class="btn btn-outline-dark splash-btn">Multiplayer</a>
+        <a href="/multiplayer/room" class="btn btn-outline-dark splash-btn">Multiplayer</a>
       </div>
     </div>
 

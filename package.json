@@ -5,23 +5,35 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test": "mocha test/*.js --exit"
+    "test": "mocha test/*.spec.js --exit"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.2",
+    "chai-http": "^4.4.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^16.4.4",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "http-errors": "~1.6.3",
     "jquery": "^3.7.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
     "morgan": "~1.9.1",
+    "nodemailer": "^6.9.9",
     "socket.io": "^4.7.4",
     "socket.io-client": "^4.7.4"
   },
   "devDependencies": {
-    "chai": "^5.0.3",
-    "mocha": "^10.2.0"
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "mocha": "^9.2.2",
+    "nyc": "^15.1.0",
+    "rewire": "^6.0.0",
+    "sinon": "^13.0.1",
+    "sinon-chai": "^3.7.0",
+    "supertest": "^6.2.2"
   }
 }

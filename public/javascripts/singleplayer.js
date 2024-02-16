@@ -392,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-        square.textContent=i
+        //square.textContent=i
 
 
 
@@ -449,7 +449,7 @@ document.addEventListener('DOMContentLoaded', () => {
  
     $("#exit").on('click',()=>{
       console.log('exit button')
-      window.location.href = '/';
+      window.location.href = '/dashboard';
     })
   
     //move around user ship
