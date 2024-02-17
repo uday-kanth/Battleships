@@ -41,7 +41,7 @@ $(document).ready(function() {
         error: function(xhr, status, error) {
           console.error(error,status);
           alert('Failed to sign up. Please try again.');
-          window.location.href = '/auth/signup-login';
+          window.location.href = '/';
         }
       });
     });

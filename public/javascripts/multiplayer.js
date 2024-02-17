@@ -180,12 +180,14 @@ $("#sendEmailBtn").on('click',function(){
       $("#p2").text(player2)
       console.log(player2)
       enemeyconnected=true;
+      enemyusername=player2
       socket.emit('i-am-player-1',username);
     })
 
     socket.on('i-am-player-1',(player1)=>{
       console.log(player1)
       enemeyconnected=true;
+      enemyusername=player1
       $("#p1").text(player1)
     })
 
@@ -572,12 +574,12 @@ $("#sendEmailBtn").on('click',function(){
     }
       //console.log((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount))
     if ((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount) === 50) {
-      infoDisplay.innerHTML = "YOU WIN"
+      //infoDisplay.innerHTML = "YOU WIN"
       winner=username
       gameOver()
     }
     if ((cpuDestroyerCount + cpuSubmarineCount + cpuCruiserCount + cpuBattleshipCount + cpuCarrierCount) === 50) {
-      infoDisplay.innerHTML = `${enemyusername} WINS`;
+      //infoDisplay.innerHTML = `${enemyusername} WINS`;
       winner=enemyusername;
       gameOver()
     }
@@ -587,10 +589,14 @@ $("#sendEmailBtn").on('click',function(){
     isGameOver = true
   }
 
-  function displayWinner(){
 
-    let reason=""
-    if(!enemeyconnected){
+
+  function displayWinner(){
+    console.log(enemyusername)
+
+
+    let reason=`${winner} have destroyed all the Enemy ships`
+    if(((cpuDestroyerCount + cpuSubmarineCount + cpuCruiserCount + cpuBattleshipCount + cpuCarrierCount) < 50) && !enemeyconnected){
       winner=username
       reason=`${enemyusername} has left`
     }
@@ -600,12 +606,9 @@ $("#sendEmailBtn").on('click',function(){
       reason
 
     }
+    const queryString = new URLSearchParams(data).toString();
   
-    alert(`the winner is ${winner}`);
-    window.location.href = '/dashboard';
-
-
-
+    window.location.href = `/winner?${queryString}`;
 
 
   }
