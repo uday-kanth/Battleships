@@ -89,16 +89,7 @@ router.post('/shareroom',verifyToken,function(req,res,next){
     res.send()
   }
 
-
-
-
-
 })
-
-
-
-
-
 
 
 

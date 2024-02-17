@@ -6,8 +6,7 @@
     <link rel='stylesheet' href='/stylesheets/navbar.css' />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/jquery.min.js"></script>
-    <!-- <script src="/socket.io/socket.io.js"></script> -->
-    <script src="/javascripts/index.js"></script>
+    
 
 
   </head>
@@ -21,10 +20,9 @@
 
 
     <div class="splash-container">
-      <h1 class="splash-title">Battleship</h1>
+      <h1 class="splash-title"><%= winner %> </h1>
       <div>
-        <a href="/singleplayer" class="btn btn-outline-dark splash-btn">Single Player</a>
-        <a href="/multiplayer/room" class="btn btn-outline-dark splash-btn">Multiplayer</a>
+        <%= reason %>
       </div>
     </div>
 

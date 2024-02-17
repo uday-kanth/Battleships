@@ -74,6 +74,9 @@ $("#sendEmailBtn").on('click',function(){
   let allShipsPlaced = false
   let shotFired = -1
   let enemyusername='enemy'
+  let winner="";
+  let userconnected=true;
+  let enemeyconnected=false;
   //Ships
   const shipArray = [
     {
@@ -176,18 +179,23 @@ $("#sendEmailBtn").on('click',function(){
     socket.on('i-am-player-2',(player2)=>{
       $("#p2").text(player2)
       console.log(player2)
+      enemeyconnected=true;
       socket.emit('i-am-player-1',username);
     })
 
     socket.on('i-am-player-1',(player1)=>{
       console.log(player1)
+      enemeyconnected=true;
       $("#p1").text(player1)
     })
 
     // Another player has connected or disconnected
     socket.on('player-connection', num => {
-      console.log(`Player number ${num} has connected or disconnected`)
-      playerConnectedOrDisconnected(num,false)
+      console.log(`Player number ${num} has connected or disconnected`);
+      enemeyconnected=false;
+      playerConnectedOrDisconnected(num,false);
+      gameOver();
+      displayWinner();
     })
 
     // On enemy ready
@@ -433,7 +441,11 @@ $("#sendEmailBtn").on('click',function(){
 
   function playGameMulti(socket) {
     setupButtons.style.display = 'none'
-    if(isGameOver) return
+    console.log(isGameOver)
+    if(isGameOver){ 
+      displayWinner()
+      
+      return;}
     if(!ready) {
       socket.emit('player-ready')
       ready = true
@@ -558,20 +570,44 @@ $("#sendEmailBtn").on('click',function(){
       infoDisplay.innerHTML = `${enemy} sunk your carrier`
       cpuCarrierCount = 10
     }
-      console.log((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount))
+      //console.log((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount))
     if ((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount) === 50) {
       infoDisplay.innerHTML = "YOU WIN"
+      winner=username
       gameOver()
     }
     if ((cpuDestroyerCount + cpuSubmarineCount + cpuCruiserCount + cpuBattleshipCount + cpuCarrierCount) === 50) {
-      infoDisplay.innerHTML = `${enemy.toUpperCase()} WINS`
+      infoDisplay.innerHTML = `${enemyusername} WINS`;
+      winner=enemyusername;
       gameOver()
     }
   }
 
   function gameOver() {
     isGameOver = true
-    startButton.removeEventListener('click', playGameSingle)
+  }
+
+  function displayWinner(){
+
+    let reason=""
+    if(!enemeyconnected){
+      winner=username
+      reason=`${enemyusername} has left`
+    }
+
+    const data={
+      winner,
+      reason
+
+    }
+  
+    alert(`the winner is ${winner}`);
+    window.location.href = '/dashboard';
+
+
+
+
+
   }
 
 
