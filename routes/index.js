@@ -6,11 +6,10 @@ const { verify } = require('jsonwebtoken');
 
 
 
-router.get('/', indexController.getIndexPage);
 
 
 
-router.get('/singleplayer',verifyToken,indexController.getIndexPage);
+router.get('/singleplayer',verifyToken,indexController.getSinglePlayerPage);
 
 
 
@@ -28,6 +27,7 @@ router.post('/shareroom',verifyToken,indexController.postShareRoom);
 
 router.get('/winner',verifyToken,indexController.getWinner);
 
+router.get('/', indexController.getIndexPage);
 
 
 

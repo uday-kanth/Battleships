@@ -36,7 +36,7 @@ app.post('/getRoomIds',verifyToken,(req,res)=>{
   const decoded=req.decoded;
 
 
-  console.log(Object.keys(roomConnections))
+  //console.log(Object.keys(roomConnections))
   let rooms=Object.keys(roomConnections);
 
   if(roomConnections.hasOwnProperty(joinCode) && roomConnections[joinCode].length<2){
@@ -101,13 +101,7 @@ const MAX_PLAYERS_PER_ROOM = 2;
 
 io.on('connection', socket => {
   const roomCode = socket.handshake.query.roomCode;
-  console.log(roomCode);
-
-    // Now you can use the roomCode as needed
-    //console.log('New WS Connection')
-    //console.log('Connected to room:', roomCode);
-   // const roomIds = getAllRoomIds();
-  //console.log('List of Room IDs:', roomIds);
+  //console.log(roomCode);
 
   if (!roomConnections.hasOwnProperty(roomCode)) {
     roomConnections[roomCode] = [];
@@ -121,21 +115,11 @@ io.on('connection', socket => {
   // Find an available player number
   let playerIndex = roomConnections[roomCode].length;
   
-  // for (const i in connections) {
-  //   if (connections[i] === null) {
-  //     playerIndex = i
-  //     //connections[i]=i;
-  //     break
-  //   }
-  // }
   socket.join(roomCode);
   //console.log(socket.rooms);
 
   
   roomConnections[roomCode].push(socket);
-
-  // Notify the client that they have successfully joined the room
-  //socket.emit('joinedRoom', room);
 
 
   socket.emit('player-number', playerIndex);

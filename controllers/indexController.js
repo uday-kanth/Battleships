@@ -35,8 +35,9 @@ exports.getSinglePlayerPage = (req, res, next) => {
 
 // Controller for GET '/multiplayer/room'
 exports.getMultiplayerRoomPage = (req, res, next) => {
+  const decoded = req.decoded;
   try {
-    res.render('room', { title: 'BattleShips' });
+    res.render('room', { title: 'BattleShips', username: decoded.username, email: decoded.email  });
   } catch (error) {
     console.error('Error accessing multiplayer room page:', error);
   }
@@ -53,6 +54,7 @@ exports.getMultiplayerPage = (req, res, next) => {
     const randomCode = generateRandomCode(6);
     const temp = req.query;
     const decoded = req.decoded;
+    console.log(temp)
     if (Object.keys(temp).length > 0) {
       res.render('multiplayer', { title: 'BattleShips', roomCode: req.query.roomCode, username: decoded.username, email: decoded.email });
     } else {
@@ -102,7 +104,17 @@ exports.getWinner=async(req,res,next)=>{
     const decoded = req.decoded;
   
     try {
-      res.render('winner', { title: 'Battleships', winner, reason ,username: decoded.username});
+      if (winner) {
+        res.render("winner", {
+            title: "Battleships",
+            winner: winner,
+            reason: reason,
+            username: decoded.username,
+            email: decoded.email
+        });
+    } else {
+        res.redirect('/dashboard');
+    }
     } catch (error) {
       console.error('Error rendering winner page:', error);
       res.status(500).send('Internal Server Error');

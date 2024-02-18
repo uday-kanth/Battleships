@@ -7,14 +7,10 @@
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/jquery.min.js"></script>
     <link rel="stylesheet" href='/stylesheets/style.css'>
-    <script src="/javascripts/singleplayer.js"></script>
+    <script src="/javascripts/singleplayer.js"></script> 
     <script>
       let gameMode = 'singlePlayer'
     </script>
-
-    <style>
-      
-    </style>
 
   </head>
   <body>
@@ -27,6 +23,7 @@
       <div class="setup-buttons" id="setup-buttons">
         <button id="start" class="btn btn-success" name="start">Start Game</button>
         <button id="rotate" class="btn btn-info" name="rotate">Rotate Your Ships</button>
+        <button id="undo" class="btn btn-primary">Undo</button>
       </div>
       <div class="m-3">
       <button id="exit" class="btn btn-warning"  >Exit</button>
@@ -44,5 +41,6 @@
         <div class="ship carrier-container" draggable="true"><div id="carrier-0"></div><div id="carrier-1"></div><div id="carrier-2"></div><div id="carrier-3"></div><div id="carrier-4"></div></div>
       </div>
     </div>
+   
   </body>
 </html>

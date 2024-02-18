@@ -37,7 +37,11 @@ var transporter = nodemailer.createTransport({
         from: 'udaybirru03@gmail.com',
         to: userMail ,
         subject: 'Battleships',
-        text: `Player ${player} is inviting you to play Battleship Game. Please Join using the RoomCode:${roomCode}`
+        html: `
+      <p>Player ${player} is inviting you to play Battleship Game.</p>
+      <p>Please click the following link to join the game:</p>
+      <a href="http://localhost:3000/multiplayer?roomCode=${roomCode}">Join Battleship Game</a>
+    `
       };
 
       transporter.sendMail(mailOptions, function(error, info){

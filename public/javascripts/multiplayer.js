@@ -5,7 +5,11 @@ document.addEventListener('DOMContentLoaded', () => {
   $("#exit").on('click',()=>{
     console.log('exit button')
     window.location.href = '/dashboard';
-  })
+  });
+
+
+
+
 
 
 
@@ -352,6 +356,14 @@ $("#sendEmailBtn").on('click',function(){
    // console.log('drag leave')
   }
 
+
+
+  let lastPlacedShipCoordinates=[]
+  let lastPlacedShip=[]
+
+
+
+
   function dragDrop() {
     console.log("hello")
     let shipNameWithLastId = draggedShip.lastChild.id
@@ -371,6 +383,7 @@ $("#sendEmailBtn").on('click',function(){
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1))
 
     shipLastId = shipLastId - selectedShipIndex
+    let coordinates=[]
     // console.log(shipLastId)
 
     if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
@@ -389,7 +402,9 @@ $("#sendEmailBtn").on('click',function(){
         let directionClass
         if (i === 0) directionClass = 'start'
         if (i === draggedShipLength - 1) directionClass = 'end'
-        userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.add('taken', 'horizontal', directionClass, shipClass)
+        let squareID=parseInt(this.dataset.id) - selectedShipIndex + i
+        userSquares[squareID].classList.add('taken', 'horizontal', directionClass, shipClass);
+        coordinates.push(squareID);
       }
     }
     else{return;}
@@ -409,7 +424,9 @@ $("#sendEmailBtn").on('click',function(){
         let directionClass
         if (i === 0) directionClass = 'start'
         if (i === draggedShipLength - 1) directionClass = 'end'
-        userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.add('taken', 'vertical', directionClass, shipClass)
+        let squareID=parseInt(this.dataset.id) - selectedShipIndex + width*i
+        userSquares[squareID].classList.add('taken', 'vertical', directionClass, shipClass)
+        coordinates.push(squareID);
       }
 
     }
@@ -418,6 +435,12 @@ $("#sendEmailBtn").on('click',function(){
     } else return
 
     displayGrid.removeChild(draggedShip)
+    lastPlacedShipCoordinates.push(coordinates);
+    lastPlacedShip.push(draggedShip);
+    //console.log(lastPlacedShipCoordinates)
+
+
+
     if(!displayGrid.querySelector('.ship')) allShipsPlaced = true
   }
 
@@ -426,7 +449,25 @@ $("#sendEmailBtn").on('click',function(){
     console.log('dragend')
   }
 
+  $("#undo").on('click',()=>{
 
+    let coordinates=lastPlacedShipCoordinates.pop();
+    if(coordinates){
+      
+    displayGrid.appendChild(lastPlacedShip.pop());
+    coordinates.forEach(coord => {
+      const square = userSquares[coord]; 
+      square.classList.remove('taken', 'horizontal', 'vertical', 'start', 'end');
+    });
+
+    }
+
+    
+
+
+
+
+  });
 
 
   

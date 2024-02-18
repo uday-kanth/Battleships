@@ -69,7 +69,7 @@ exports.loginUser = async (req, res) => {
 
     // Generate JWT token
     const token = jwt.sign({ email,username:user.username},process.env.JWT_KEY, {expiresIn: '1h',});
-    res.cookie('jwtToken', token, { withCredentials:true,sameSite:"strict" ,httpOnly: true}); 
+    res.cookie('jwtToken', token, { withCredentials:true,httpOnly: true}); 
     res.status(200).send();
   } catch (error) {
     console.error(error);

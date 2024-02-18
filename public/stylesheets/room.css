@@ -1,4 +1,15 @@
-
+body{
+    overflow: hidden;
+}
+.splash-battleship-image {
+    position: absolute;
+    bottom: 5vh;
+    left: 20vw;
+    width: 100%;
+    transform: rotateY(180deg);
+    pointer-events: none;
+    opacity: .25;
+  }
 .room{
     height: 100vh;
     
@@ -13,6 +24,7 @@
     
 }
 
+  
 .roomcard{
     height: 30%;
     width: 30%;
