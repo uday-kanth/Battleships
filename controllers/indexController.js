@@ -1,22 +1,22 @@
 // Import necessary modules
 const { sendRoomCode } = require("../utils/mailerUtil");
 const {generateRandomCode}=require("../utils/generateRandomCode");
-
+ 
 
 // Controller for GET '/'
 exports.getIndexPage = async (req, res, next) => {
   try {
     const token = await req.cookies.jwtToken;
     if (!token) {
-      return res.render('signuplogin', { title: 'BattleShips' });
+      return res.status(200).render('signuplogin', { title: 'BattleShips' });
     } else {
-      return res.redirect('/dashboard');
+      return res.status(200).redirect('/dashboard');
     }
   } catch (error) {
     console.error('Error accessing index page:', error);
   }
 };
-
+ 
 
 
 
@@ -54,7 +54,7 @@ exports.getMultiplayerPage = (req, res, next) => {
     const randomCode = generateRandomCode(6);
     const temp = req.query;
     const decoded = req.decoded;
-    console.log(temp)
+    //console.log(temp)
     if (Object.keys(temp).length > 0) {
       res.render('multiplayer', { title: 'BattleShips', roomCode: req.query.roomCode, username: decoded.username, email: decoded.email });
     } else {

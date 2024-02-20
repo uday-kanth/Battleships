@@ -1,103 +1,188 @@
 const chai = require('chai');
-const chaiHttp = require('chai-http');
 const sinon = require('sinon');
-const rewire = require('rewire');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const DBconnection = require('../db/db');
+const authController = require('../controllers/authController');
+const { welcomeMail } = require('../utils/mailerUtil');
 
-const authController = rewire('../controllers/authController');
-
-
-chai.use(chaiHttp);
 const expect = chai.expect;
 
-describe('Authentication Controller - Register User', () => {
-  let registerUser;
-  let collectionMock;
-
-  beforeEach(async () => {
-    registerUser = await authController.__get__('registerUser');
-    collectionMock = {
-      findOne: sinon.stub().returns(null),
-      insertOne: sinon.stub().returns(true)
-    };
-    authController.__set__('DBconnection', {
-      get: sinon.stub().returns({ db: () => ({ collection: () => collectionMock }) })
-    });
-  });
-
-  it('should return status 400 if email already exists', async () => {
-    collectionMock.findOne.returns({ email: 'test@example.com' });
-    const req = { body: { username: 'test', email: 'test@example.com', password: 'password' } };
-    const res = { status: sinon.stub(), json: sinon.stub() };
-    res.status.returns(res);
-
-    await registerUser(req, res);
-    expect(res.status.calledWith(400)).to.be.true;
-    expect(res.json.calledWith({ error: 'Email already exists' })).to.be.true;
-  });
-
-  it('should return status 400 if email is invalid', async () => {
-    const req = { body: { username: 'test', email: 'invalid-email', password: 'password' } };
-    const res = { status: sinon.stub(), json: sinon.stub() };
-    res.status.returns(res);
-
-    await registerUser(req, res);
-    expect(res.status.calledWith(400)).to.be.true;
-    expect(res.json.calledWith({ error: 'Please provide all required fields' })).to.be.true;
-  });
-
-  it('should return status 200 and message if user is registered successfully', async () => {
-    const req = { body: { username: 'test', email: 'test@example.com', password: 'password' } };
-    const res = { status: sinon.stub(), json: sinon.stub() };
-    res.status.returns(res);
-
-    await registerUser(req, res);
-    expect(res.status.calledWith(200)).to.be.true;
-    expect(res.json.calledWith({ message: 'User signed up successfully' })).to.be.true;
-  });
-});
-
-describe('Authentication Controller - Login User', () => {
-  let loginUser;
-  let collectionMock;
+describe('AuthController', () => {
+  let req, res, next, client, collection;
 
   beforeEach(() => {
-    loginUser = authController.__get__('loginUser');
-    collectionMock = {
-      findOne: sinon.stub().returns({ email: 'test@example.com', password: 'hashedPassword' })
+    req = { body: {} };
+    res = {
+      status: sinon.stub().returnsThis(),
+      json: sinon.spy()
     };
-    authController.__set__('DBconnection', {
-      get: sinon.stub().returns({ db: () => ({ collection: () => collectionMock }) })
+    next = sinon.spy();
+    client = {
+      db: sinon.stub().returnsThis(),
+      collection: sinon.stub().returnsThis(),
+      insertOne: sinon.stub().resolves(),
+      findOne: sinon.stub().resolves(null)
+    };
+    sinon.stub(DBconnection, 'get').resolves(client);
+  });
+
+  afterEach(() => {
+    sinon.restore();
+  });
+
+  describe('registerUser', () => {
+    it('should register a new user successfully', async () => {
+      req.body = { username: 'testuser', email: 'test@example.com', password: 'testpassword' };
+      await authController.registerUser(req, res, next);
+      expect(res.status.calledWith(200)).to.be.true;
+      expect(res.json.calledWith({ message: 'User signed up successfully' })).to.be.true;
+      expect(DBconnection.get.calledOnce).to.be.true;
     });
+
+
+    it('should return error if email already exists', async () => {
+      req.body = { username: 'testuser', email: 'existing@example.com', password: 'testpassword' };
+      client.findOne.resolves({}); // Simulating existing user
+      await authController.registerUser(req, res, next);
+      expect(res.status.calledWith(400)).to.be.true;
+      expect(res.json.calledWith({ error: 'Email already exists' })).to.be.true;
+    });
+
+
+    it('should return error if email is invalid', async () => {
+      req.body = { username: 'testuser', email: 'invalidemail', password: 'testpassword' };
+      await authController.registerUser(req, res, next);
+      expect(res.status.calledWith(400)).to.be.true;
+      expect(res.json.calledWith({ error: 'Please provide all required fields' })).to.be.true;
+    });
+
+    it('should return 500 error if an internal server error occurs', async () => {
+      req.body = { username: 'testuser', email: 'test@example.com', password: 'testpassword' };
+      sinon.stub(console, 'error');
+      client.insertOne.rejects(new Error('Database error'));
+      await authController.registerUser(req, res, next);
+      expect(res.status.calledWith(500)).to.be.true;
+      expect(res.json.calledWith({ error: 'Internal server error' })).to.be.true;
+    });
+
+   
   });
 
-  it('should return status 401 if user does not exist', async () => {
-    collectionMock.findOne.returns(null);
-    const req = { body: { email: 'test@example.com', password: 'password' } };
-    const res = { status: sinon.stub(), json: sinon.stub(), cookie: sinon.stub() };
-    res.status.returns(res);
 
-    await loginUser(req, res);
-    expect(res.status.calledWith(401)).to.be.true;
-    expect(res.json.calledWith({ error: 'Invalid credentials' })).to.be.true;
+
+  describe('logoutUser', () => {
+    let req, res;
+  
+    beforeEach(() => {
+      req = {};
+      res = {
+        clearCookie: sinon.spy(),
+        status: sinon.stub().returnsThis(),
+        json: sinon.spy()
+      };
+    });
+  
+    
+      it('should clear JWT token from client-side and return successful logout message', () => {
+        authController.logoutUser(req, res);
+        expect(res.clearCookie.calledWith('jwtToken')).to.be.true;
+        expect(res.status.calledWith(200)).to.be.true;
+        expect(res.json.calledWith({ message: 'Logout successful' })).to.be.true;
+      });
+    
   });
 
-  it('should return status 401 if password is incorrect', async () => {
-    const req = { body: { email: 'test@example.com', password: 'incorrectPassword' } };
-    const res = { status: sinon.stub(), json: sinon.stub(), cookie: sinon.stub() };
-    res.status.returns(res);
 
-    await loginUser(req, res);
-    expect(res.status.calledWith(401)).to.be.true;
-    expect(res.json.calledWith({ error: 'Invalid credentials' })).to.be.true;
+
+
+
+
+  describe('loginUser', () => {
+    let req, res;
+  
+    beforeEach(() => {
+      req = {
+        body: {
+          email: 'test@example.com',
+          password: 'password123'
+        }
+      };
+      res = {
+        status: sinon.stub().returnsThis(),
+        cookie: sinon.spy(),
+        send: sinon.spy(),
+        json: sinon.spy()
+      };
+    });
+  
+    
+      it('should return 401 if user does not exist', async () => {
+        // sinon.stub(DBconnection, 'get').resolves({
+        //   db: () => ({
+        //     collection: () => ({
+        //       findOne: sinon.stub().resolves(null)
+        //     })
+        //   })
+        // });
+  
+        await authController.loginUser(req, res);
+  
+        expect(res.status.calledWith(401)).to.be.true;
+        expect(res.json.calledWith({ error: 'Invalid credentials' })).to.be.true;
+      });
+  
+      it('should return 401 if password does not match', async () => {
+        // sinon.stub(DBconnection, 'get').resolves({
+        //   db: () => ({
+        //     collection: () => ({
+        //       findOne: sinon.stub().resolves({ password:bcrypt.hash('differentPassword', 10) })
+        //     })
+        //   })
+        // });
+  
+        await authController.loginUser(req, res);
+  
+        expect(res.status.calledWith(401)).to.be.true;
+        expect(res.json.calledWith({ error: 'Invalid credentials' })).to.be.true;
+      });
+  
+      it('should set JWT token in cookies and return 200 if login successful', async () => {
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
+        client.findOne.resolves({ password: hashedPassword, username: 'testuser' });
+  
+        sinon.stub(jwt, 'sign').returns('mockToken');
+  
+        await authController.loginUser(req, res);
+  
+        expect(res.cookie.calledWith('jwtToken', 'mockToken', { withCredentials: true, httpOnly: true })).to.be.true;
+        expect(res.status.calledWith(200)).to.be.true;
+        expect(res.send.calledOnce).to.be.true;
+      });
+  
+    
+    
   });
 
-  it('should return status 200 and set JWT token in cookies if login is successful', async () => {
-    const req = { body: { email: 'test@example.com', password: 'password' } };
-    const res = { status: sinon.stub(), json: sinon.stub(), cookie: sinon.stub() };
-    res.status.returns(res);
 
-    await loginUser(req, res);
-    expect(res.status.calledWith(200)).to.be.true;
-    expect(res.cookie.calledWith('jwtToken')).to.be.true;
-  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 });

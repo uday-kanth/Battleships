@@ -6,7 +6,7 @@ const { verify } = require('jsonwebtoken');
 
 
 
-
+ 
 
 
 router.get('/singleplayer',verifyToken,indexController.getSinglePlayerPage);
