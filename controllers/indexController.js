@@ -1,6 +1,7 @@
 // Import necessary modules
 const { sendRoomCode } = require("../utils/mailerUtil");
 const {generateRandomCode}=require("../utils/generateRandomCode");
+const DBconnection=require('../db/db');
  
 
 // Controller for GET '/'
@@ -123,3 +124,9 @@ exports.getWinner=async(req,res,next)=>{
 
 
 }
+
+
+
+
+
+

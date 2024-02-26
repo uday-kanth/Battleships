@@ -16,9 +16,9 @@ exports.registerUser = async (req, res) => {
     const { username, email, password } = req.body;
     
     
-    const existingUser = await collection.findOne({ email });
+    const existingUser = await collection.findOne({ $or: [{ email: email }, { username: username }] });
     if (existingUser) {
-      return res.status(400).json({ error: 'Email already exists' });
+      return res.status(400).json({ error: 'Email OR Username already exists' });
     }
     if (!isValidEmail(email)) {
         return res.status(400).json({ error: 'Please provide all required fields' });
@@ -31,7 +31,8 @@ exports.registerUser = async (req, res) => {
     await collection.insertOne({
         email,
         username,
-        password:hashedPassword
+        password:hashedPassword,
+        friends: []
     });
     
     welcomeMail(email);

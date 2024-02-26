@@ -46,7 +46,7 @@ describe('AuthController', () => {
       client.findOne.resolves({}); // Simulating existing user
       await authController.registerUser(req, res, next);
       expect(res.status.calledWith(400)).to.be.true;
-      expect(res.json.calledWith({ error: 'Email already exists' })).to.be.true;
+      expect(res.json.calledWith({ error: 'Email OR Username already exists' })).to.be.true;
     });
 
 

@@ -8,6 +8,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
+  $("#sendMessageBtn").on("click",()=>{
+    console.log("chat btn")
+
+    let message=$("#message")
+    console.log(message.val())
+
+    message.val('');
+
+  })
+
 
 
 
@@ -120,6 +130,39 @@ $("#sendEmailBtn").on('click',function(){
     },
   ]
 
+
+
+function checkFriend(){
+  console.log("temp")
+  fetch(`/friends/checkFriend?enemyusername=${encodeURIComponent(enemyusername)}`)
+  .then(response => {
+    if (response.ok) {
+      
+      return response.json();
+    }
+    throw new Error('Network response was not ok.');
+  })
+  .then((data) => {
+    // Handle the data received from the server
+    //console.log('Received data:', data);
+    if(data.check){
+      $(".addFriend").hide();
+    }
+  })
+  .catch(error => {
+    // Handle errors
+    console.error('Error fetching data:', error);
+  });
+}
+
+ 
+
+
+
+
+
+
+
   
 
   // Select Player Mode
@@ -145,12 +188,14 @@ $("#sendEmailBtn").on('click',function(){
         ${username}
         <div class="connected">Connected</div>
         <div class="ready">Ready</div>
+
       </div>
       
       <div class="player p2" >
         <div id="p2">${enemyusername}</div>
         <div class="connected">Connected</div>
         <div class="ready">Ready</div>
+        <button type="button" class="btn btn-success addFriend">+</button>
       </div>`
       
       const info2=` 
@@ -163,6 +208,7 @@ $("#sendEmailBtn").on('click',function(){
         <div  id='p1' >${enemyusername}</div>
       <div class="connected">Connected</div>
       <div class="ready">Ready</div>
+      <button type="button" class="btn btn-success addFriend">+</button>
     </div>
     `
 
@@ -173,6 +219,39 @@ $("#sendEmailBtn").on('click',function(){
       $("#playerinfo").html(info2);
       socket.emit('i-am-player-2',username);
     }
+    $(".addFriend").on('click',()=>{
+      console.log("addfriend")
+  
+  
+      const data={
+        enemyusername
+      }
+  
+  
+    fetch('/friends/addFriend', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('friend added successfully!');
+        $(".addFriend").hide();
+      } else {
+        alert('Failed to send friend request.');
+      }
+    })
+    .catch(error => {
+      console.error('Error sending friend request:', error);
+      alert('Failed to send friend request.');
+    });
+  
+  
+  
+  
+    })
 
         // Get other player status
         socket.emit('check-players')
@@ -185,13 +264,16 @@ $("#sendEmailBtn").on('click',function(){
       console.log(player2)
       enemeyconnected=true;
       enemyusername=player2
+      checkFriend();
       socket.emit('i-am-player-1',username);
+
     })
 
     socket.on('i-am-player-1',(player1)=>{
       console.log(player1)
       enemeyconnected=true;
       enemyusername=player1
+      checkFriend();
       $("#p1").text(player1)
     })
 
@@ -228,7 +310,7 @@ $("#sendEmailBtn").on('click',function(){
         }
       })
     })
-
+ 
     // On Timeout
     socket.on('timeout', () => {
       infoDisplay.innerHTML = 'You have reached the 10 minute limit'
@@ -380,6 +462,8 @@ $("#sendEmailBtn").on('click',function(){
     let newNotAllowedHorizontal = notAllowedHorizontal.splice(0, 10 * lastShipIndex)
     let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * lastShipIndex)
 
+    
+
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1))
 
     shipLastId = shipLastId - selectedShipIndex
@@ -424,7 +508,7 @@ $("#sendEmailBtn").on('click',function(){
         let directionClass
         if (i === 0) directionClass = 'start'
         if (i === draggedShipLength - 1) directionClass = 'end'
-        let squareID=parseInt(this.dataset.id) - selectedShipIndex + width*i
+        let squareID=parseInt(this.dataset.id) + width*i
         userSquares[squareID].classList.add('taken', 'vertical', directionClass, shipClass)
         coordinates.push(squareID);
       }
@@ -656,7 +740,7 @@ $("#sendEmailBtn").on('click',function(){
 
 
 
-
+ 
  
 
 

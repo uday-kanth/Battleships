@@ -1,0 +1,30 @@
+body{
+    height: 100vh;
+}
+
+.container {
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.friends-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.friend-card {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 20px;
+    width: calc(33.33% - 20px); /* Adjust width to fit 3 cards in a row */
+    box-sizing: border-box;
+}
+
+.friend-card h2 {
+    margin-top: 0;
+}
+
+.friend-card p {
+    margin-bottom: 0;
+}

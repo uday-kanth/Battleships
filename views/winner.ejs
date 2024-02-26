@@ -3,50 +3,26 @@
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
-    <link rel='stylesheet' href='/stylesheets/navbar.css' />
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/jquery.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
+    <script src="/javascripts/header.js"></script> 
    
     
-<script>
-  $(document).ready(function() {
-  
-  
-      $('#logoutBtn').on('click', function() {
-          
-          $.ajax({
-              url: '/auth/logout', 
-              method: 'POST',
-              success: function(response) {
-                  
-                  window.location.href = '/'; 
-              },
-              error: function(xhr, status, error) {
-                  console.error(error);
-                  alert('Failed to logout. Please try again.');
-              }
-          });
-      });
-  
-  
-  
-  });</script>
+
 
   </head>
   <body>
-    <div class="topnav row ">
-      <div class="col-6 py-3 px-5 text-white h3"><%= username %></div>
-      <div class="col-6 py-3 px-5" id="logoutdiv"> 
-        <button class="btn btn-outline-warning " id="logoutBtn" type="btn"> Logout</button>
-      </div>
-    </div>
-
-
+    <%include header%>
     <div class="splash-container">
+      <div>the winner is</div>
       <h1 class="splash-title"><%= winner %> </h1>
       <div>
         <%= reason %>
       </div>
+
+      <a href="/dashboard" class="btn btn-outline-dark mt-2">home</a>
+
     </div>
 
     <img src="/images/battleship-large.svg" class="splash-battleship-image">

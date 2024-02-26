@@ -1,0 +1,16 @@
+.player{
+   position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 200px;
+}
+
+
+.addFriend{
+    border-radius: 50%;
+    background-color: green;
+    position: absolute;
+    top: 0;
+    right: 0;
+}

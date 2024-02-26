@@ -9,6 +9,7 @@ require('dotenv').config()
 const verifyToken=require('./middleware/authMiddleware')
 
 var indexRouter = require('./routes/index');
+var friendsRouter=require('./routes/friends');
 var usersRouter = require('./routes/users');
 var authRouter=require('./routes/auth');
 
@@ -53,7 +54,7 @@ app.post('/getRoomIds',verifyToken,(req,res)=>{
 
 });
 
-
+app.use('/friends',friendsRouter);
 app.use('/auth', authRouter);
 app.use('/', indexRouter);
 

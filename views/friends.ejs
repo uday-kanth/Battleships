@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/friends.css' />
+    <script src="/javascripts/friends.js"></script> 
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
+    <script src="/javascripts/header.js"></script> 
+    
+    <!-- <script src="/socket.io/socket.io.js"></script> -->
+</head>
+<body >
+    <%include header%>
+    <div class="container-fluid">
+
+          <div>
+
+        <h1>Friends List</h1>
+        <div class="friends-container">
+            <% friends.forEach(friend => { %>
+                <div class="friend-card">
+                    <h2><%= friend.username %></h2>
+                    <p>Email: <%= friend.email %></p>
+                    <button class="btn btn-danger unfriend-btn mt-2" data-friend="<%= friend.username %>">Unfriend</button>
+                    <button class="btn btn-primary invite-btn mt-2" data-friend="<%= friend.username %>">Invite</button>
+                </div>
+            <% }); %>
+        </div>
+
+
+
+
+
+
+
+
+          </div>
+
+
+
+
+
+        
+    </div>
+
+</body>
+</html>

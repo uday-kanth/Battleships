@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Battle Ships</title>
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/multiplayer.css">
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Montserrat&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/bootstrap.min.css">
     <script src="./js/jquery.min.js"></script>
@@ -36,9 +37,9 @@
 
   </head>
   <body id="multiplayerBody">
-    <div class="container" id="playerinfo">
-     
-    </div>
+    <div class="container" id="playerinfo"></div>
+
+   
 
 
     <div class="mt-2 text-center h4">
@@ -48,8 +49,14 @@
     </div>
 
     <div class="container">
+      <!-- <div style="display: flex; flex-direction: row; height: 40px;">
+        <input type="text" value="" name="message" id="message" placeholder="enter the message">
+        <button type="button" id="sendMessageBtn" class="btn btn-success"> ></button>
+ 
+      </div> -->
       <div class="battleship-grid grid-user"></div>
       <div class="battleship-grid grid-computer"></div>
+      <!-- <div><p>message</p></div> -->
     </div>
 
     <div class="container hidden-info">
