@@ -11,6 +11,8 @@
     <script src="/javascripts/multiplayer.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
 
     
     <script>
@@ -43,7 +45,10 @@
 
 
     <div class="mt-2 text-center h4">
-     <div>Room Code : <span id="roomCode"><%= roomCode %></span></div>
+     <div>Room Code : <span id="roomCode"><%= roomCode %></span>
+
+      <button id="copyRoomCode" class="btn btn-dark" title="Copy Room Code">copy</button>
+  </div>
       <div><button id="shareBtn" class="btn btn-dark mt-3" data-toggle="modal" data-target="#shareModal">Share</button></div>
 
     </div>

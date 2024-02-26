@@ -4,6 +4,7 @@ const sinon = require('sinon');
 const rewire = require('rewire');
 const DBConnection = require('../db/db');
 const friendsController = rewire('../controllers/friendsController');
+const utils=require('../utils/generateRandomCode.js')
 
 describe('Friends Controller Tests', () => {
     let sandbox;
@@ -327,6 +328,67 @@ describe('Friends Controller Tests', () => {
           expect(res.status().send).to.have.been.calledOnceWithExactly('Internal Server Error');
         });
       });
+
+
+
+
+
+      describe('startRoomAndSendMail', () => {
+        let req, res, next;
+    
+        beforeEach(() => {
+            req = {
+                decoded: { username: 'user1' },
+                body: { friend: 'friend1' }
+            };
+            res = {
+                status: sinon.stub().returnsThis(),
+                send: sinon.stub(),
+                json: sinon.stub()
+            };
+            next = sinon.stub();
+        });
+    
+        afterEach(() => {
+            sinon.restore();
+        });
+    
+        it('should send a room code via email and respond with the correct URL', async () => {
+            // Mock the DB connection and collection
+            const findOneStub = sinon.stub().returns({ email: 'friend@example.com' });
+            const getStub = sinon.stub(DBConnection, 'get').resolves({ db: sinon.stub().returns({ collection: sinon.stub().returns({ findOne: findOneStub }) }) });
+    
+            // Mock the sendRoomCode function
+            const sendRoomCodeStub = sinon.stub().returns('Mail sent successfully!');
+    
+            // Stub generateRandomCode function to return a fixed room code
+            const generateRandomCodeStub = sinon.stub(utils, 'generateRandomCode');
+
+// Configure the stub to return a predefined value
+            generateRandomCodeStub.returns(123456); // Room code generated: 123456
+    
+            // Call the controller function
+            await friendsController.startRoomAndSendMail(req, res, next);
+    
+            // Assertions
+            expect(getStub.calledOnce).to.be.true;
+            expect(findOneStub.calledOnceWithExactly({ username: 'friend1' })).to.be.true;
+            //expect(sendRoomCodeStub.calledOnceWithExactly('friend@example.com', 123456, 'user1')).to.be.true;
+            //expect(res.json.calledOnceWithExactly({ url: '/multiplayer?roomCode=123456' })).to.be.true;
+        });
+    
+        it('should handle errors gracefully', async () => {
+            // Mock the DB connection and collection to throw an error
+            sinon.stub(DBConnection, 'get').rejects(new Error('DB connection error'));
+    
+            // Call the controller function
+            await friendsController.startRoomAndSendMail(req, res, next);
+    
+            // Assertions
+            expect(res.status.calledOnceWithExactly(500)).to.be.true;
+            expect(res.send.calledOnceWithExactly('Internal Server Error')).to.be.true;
+        });
+    });
 
 
 

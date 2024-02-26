@@ -20,6 +20,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
+  $("#copyRoomCode").click(function() {
+    var roomCode = $("#roomCode").text();
+    var textarea = $("<textarea>")
+        .val(roomCode)
+        .appendTo("body")
+        .select();
+    document.execCommand("copy");
+    textarea.remove();
+    alert("Room code copied to clipboard: " + roomCode);
+});
+
+
+
 
 
 
