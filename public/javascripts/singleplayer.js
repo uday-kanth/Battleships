@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-        square.textContent=i
+        //square.textContent=i
 
 
 
