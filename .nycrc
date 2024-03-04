@@ -1,0 +1,14 @@
+{
+  "all": true,
+  "include": [
+    "**/*.js"
+  ],
+  "exclude": [
+    "app.js",
+    "public/**/*.js",
+    "cypress/**/*.js",
+    "frontendTest/**/*.js",
+    "cypress.config.js"
+    
+  ]
+}

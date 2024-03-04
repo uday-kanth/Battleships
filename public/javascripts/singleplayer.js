@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-        // square.textContent=i
+        square.textContent=i
 
 
 
@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     function generate(ship) {
       let randomDirection = Math.floor(Math.random() * ship.directions.length)
+      
       let current = ship.directions[randomDirection]
       if (randomDirection === 0) direction = 1
       if (randomDirection === 1) direction = 10
@@ -171,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function dragStart() {
       draggedShip = this
       draggedShipLength = this.childNodes.length
-      console.log(draggedShip)
+      //console.log(draggedShip)
     }
   
     function dragOver(e) {
@@ -205,31 +206,34 @@ document.addEventListener('DOMContentLoaded', () => {
       let alreadyHaveShip=this.classList.contains("taken");
       //console.log(this) 
       //console.log(alreadyHaveShip)
+      let forVerticalshipLastId=parseInt(this.dataset.id)+(10*lastShipIndex)
+      console.log(forVerticalshipLastId)
 
       
 
       
-      console.log(shipLastId+" "+shipClass)
+      //console.log(shipLastId+" "+shipClass)
+      //console.log(lastShipIndex)
       const notAllowedHorizontal = [0,10,20,30,40,50,60,70,80,90,1,11,21,31,41,51,61,71,81,91,2,22,32,42,52,62,72,82,92,3,13,23,33,43,53,63,73,83,93]
       const notAllowedVertical = [99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60]
 
       let newNotAllowedHorizontal = notAllowedHorizontal.splice(0, 10 * lastShipIndex)
-      let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * lastShipIndex)
-      console.log(newNotAllowedVertical)
+      let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * 0)
+      //console.log(newNotAllowedVertical)
   
       selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1))
   
       shipLastId = shipLastId - selectedShipIndex
       let coordinates=[]
-      // console.log(shipLastId)
+       //console.log(shipLastId)
   
-      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+      if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)&& !alreadyHaveShip) {
 
 
 
         for (let i=0; i < draggedShipLength; i++) {
           alreadyHaveShip=userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.contains('taken');
-          if(alreadyHaveShip){
+          if(alreadyHaveShip!==false ){
             break;
           }
         }
@@ -250,12 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
       else{return;}
       //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its
       //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
-      } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId) && !alreadyHaveShip) {
+      } else if (!isHorizontal && !newNotAllowedVertical.includes(forVerticalshipLastId) && !alreadyHaveShip) {
 
         for (let i=0; i < draggedShipLength; i++) {
           
-          alreadyHaveShip=userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.contains('taken');
-          if(alreadyHaveShip){
+          alreadyHaveShip=userSquares[parseInt(this.dataset.id)+ width*i].classList.contains('taken');
+          console.log("haha"+parseInt(this.dataset.id) - selectedShipIndex + width*i)
+          if(alreadyHaveShip!==false ){
             break;
           }
         }
@@ -268,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
           if (i === 0) directionClass = 'start'
           if (i === draggedShipLength - 1) directionClass = 'end'
           let squareID=parseInt(this.dataset.id)+ width*i
-          console.log(this.dataset.id)
+          //console.log(this.dataset.id)
           userSquares[squareID].classList.add('taken', 'vertical', directionClass, shipClass)
           coordinates.push(squareID);
         }
@@ -290,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     function dragEnd(e) {
       e.preventDefault()
-      console.log('dragend')
+      //console.log('dragend')
     }
 
 
@@ -433,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
         infoDisplay.innerHTML = `${enemy} sunk your carrier`
         cpuCarrierCount = 10
       }
-        console.log((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount))
+        //console.log((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount))
       if ((destroyerCount + submarineCount + cruiserCount + battleshipCount + carrierCount) === 50) {
         infoDisplay.innerHTML = "YOU WIN"
         gameOver()

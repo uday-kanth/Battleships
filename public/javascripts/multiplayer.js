@@ -314,7 +314,7 @@ function checkFriend(){
       players.forEach((p, i) => {
         if(p.connected)
         { playerConnectedOrDisconnected(i,p.connected);
-          console.log(i+"check-player")
+          //console.log(i+"check-player")
         }
         if(p.ready) {
           console.log(`${p} + ${p.ready}`)
@@ -433,7 +433,7 @@ function checkFriend(){
   function dragStart() {
     draggedShip = this
     draggedShipLength = this.childNodes.length
-    console.log(draggedShip)
+    //console.log(draggedShip)
   }
 
   function dragOver(e) {
@@ -460,7 +460,7 @@ function checkFriend(){
 
 
   function dragDrop() {
-    console.log("hello")
+    //console.log("hello")
     let shipNameWithLastId = draggedShip.lastChild.id
     let shipClass = shipNameWithLastId.slice(0, -2)
     let lastShipIndex = parseInt(shipNameWithLastId.substr(-1))
@@ -473,17 +473,18 @@ function checkFriend(){
     const notAllowedVertical = [99,98,97,96,95,94,93,92,91,90,89,88,87,86,85,84,83,82,81,80,79,78,77,76,75,74,73,72,71,70,69,68,67,66,65,64,63,62,61,60]
     
     let newNotAllowedHorizontal = notAllowedHorizontal.splice(0, 10 * lastShipIndex)
-    let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * lastShipIndex)
+    let newNotAllowedVertical = notAllowedVertical.splice(0, 10 * 0)
 
     
 
     selectedShipIndex = parseInt(selectedShipNameWithIndex.substr(-1))
 
     shipLastId = shipLastId - selectedShipIndex
+    let forVerticalshipLastId=parseInt(this.dataset.id)+(10*lastShipIndex)
     let coordinates=[]
     // console.log(shipLastId)
 
-    if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)) {
+    if (isHorizontal && !newNotAllowedHorizontal.includes(shipLastId)&& !alreadyHaveShip) {
       for (let i=0; i < draggedShipLength; i++) {
         alreadyHaveShip=userSquares[parseInt(this.dataset.id) - selectedShipIndex + i].classList.contains('taken');
         if(alreadyHaveShip){
@@ -507,11 +508,11 @@ function checkFriend(){
     else{return;}
     //As long as the index of the ship you are dragging is not in the newNotAllowedVertical array! This means that sometimes if you drag the ship by its
     //index-1 , index-2 and so on, the ship will rebound back to the displayGrid.
-    } else if (!isHorizontal && !newNotAllowedVertical.includes(shipLastId)) {
+    } else if (!isHorizontal && !newNotAllowedVertical.includes(forVerticalshipLastId)&& !alreadyHaveShip) {
       for (let i=0; i < draggedShipLength; i++) {
           
-        alreadyHaveShip=userSquares[parseInt(this.dataset.id) - selectedShipIndex + width*i].classList.contains('taken');
-        if(alreadyHaveShip){
+        alreadyHaveShip=userSquares[parseInt(this.dataset.id)+ width*i].classList.contains('taken');
+        if(alreadyHaveShip!==false){
           break;
         }
       }
